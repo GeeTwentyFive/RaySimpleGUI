@@ -142,7 +142,7 @@ void UI__Draw() {
 
         // Draw
 
-        for (int i = 0; i <= _UI__widgets_size; i++) {
+        for (int i = 0; i < _UI__widgets_size; i++) {
 
                 int verticalOffset;
                 if (bCenterWidgets) verticalOffset = (GetScreenHeight()/2 - totalHeight/2) + (_UI__HEIGHT*_UI__scale * i);
