@@ -64,6 +64,6 @@ int main() {
 }
 ```
 
-### Example output:
+### ^ Example output:
 
 ![](https://github.com/GeeTwentyFive/RaySimpleGUI/blob/main/docs/Example_Output.png)
