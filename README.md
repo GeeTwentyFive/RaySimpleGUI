@@ -36,6 +36,7 @@ void ExampleCallback() {
 	puts("Click!");
 }
 
+int bCheckboxState = 1;
 char inputFieldData[64];
 
 int main() {
@@ -49,6 +50,7 @@ int main() {
 			RaySimpleGUI__Label("EXAMPLE LABEL");
 			RaySimpleGUI__Gap();
 			RaySimpleGUI__Button("EXAMPLE BUTTON", &ExampleCallback);
+			RaySimpleGUI__Checkbox(&bCheckboxState);
 			RaySimpleGUI__InputField(inputFieldData, 64);
 
 			RaySimpleGUI__Draw();
@@ -57,6 +59,7 @@ int main() {
 
 	}
 
+	printf("\nLast checkbox state: %d\n", bCheckboxState);
 	printf("\nInput field data: %s\n", inputFieldData);
 
 	return 0;
