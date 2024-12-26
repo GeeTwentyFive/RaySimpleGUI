@@ -11,6 +11,7 @@ It arranges all widgets in a dynamic column with all of those aforementioned thi
 - Gap
 - Label
 - Button
+- Checkbox
 - InputField
 - **...possibly more to come...**
 
