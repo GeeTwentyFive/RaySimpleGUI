@@ -19,16 +19,16 @@ It arranges all widgets in a dynamic column with all of those aforementioned thi
 
 # Usage:
 Between [raylib](https://github.com/raysan5/raylib)'s `BeginDrawing()` & `EndDrawing()`:
-1) Assemble UI by calling related widget functions (Ex.: `UI__Button("Button text", &CallbackFunction)`)
-2) Call `UI__Draw()`
+1) Assemble UI by calling related widget functions (Ex.: `RaySimpleGUI__Button("Button text", &CallbackFunction)`)
+2) Call `RaySimpleGUI__Draw()`
 
 # Example:
 ```c
 #include <stdio.h>
 
-#include "external/raylib/raylib.h"
+#include "raylib/raylib.h"
 
-#include "UI.h"
+#include "RaySimpleGUI.h"
 
 
 
@@ -46,12 +46,12 @@ int main() {
 
 		BeginDrawing();
 
-			UI__Label("EXAMPLE LABEL");
-			UI__Gap();
-			UI__Button("EXAMPLE BUTTON", &ExampleCallback);
-			UI__InputField(inputFieldData, 64);
+			RaySimpleGUI__Label("EXAMPLE LABEL");
+			RaySimpleGUI__Gap();
+			RaySimpleGUI__Button("EXAMPLE BUTTON", &ExampleCallback);
+			RaySimpleGUI__InputField(inputFieldData, 64);
 
-			UI__Draw();
+			RaySimpleGUI__Draw();
 
 		EndDrawing();
 
