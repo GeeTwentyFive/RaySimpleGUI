@@ -4,7 +4,7 @@ It arranges all widgets in a dynamic column with all of those aforementioned thi
 
 # Features:
 - Auto-scaling based on window/screen height
-- Automatically chooses between centering and scrolling based on number of widgets
+- Automatically chooses between centering and scrolling based on total vertical size of all added widgets relative to vertical screen space
 - One-line widget adding
 
 # Widgets:
