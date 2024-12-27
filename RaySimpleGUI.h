@@ -34,8 +34,8 @@ SOFTWARE.
 
 
 
-// Base (unscaled) height
-const int _RaySimpleGUI__HEIGHT = 14;
+// Base (unscaled) widget height
+const int _RaySimpleGUI__WIDGET_HEIGHT = 14;
 
 int _RaySimpleGUI__scale;
 int _RaySimpleGUI__scrollOffset = 0;
@@ -47,6 +47,7 @@ typedef enum {
         _RaySimpleGUI__WIDGETTYPE_GAP,
         _RaySimpleGUI__WIDGETTYPE_LABEL,
         _RaySimpleGUI__WIDGETTYPE_BUTTON,
+        _RaySimpleGUI__WIDGETTYPE_CHECKBOX,
         _RaySimpleGUI__WIDGETTYPE_INPUTFIELD
 
 } _RaySimpleGUI__WidgetType;
@@ -57,6 +58,7 @@ typedef struct {
         union {
                 char *text;
                 char *text_OUT;
+                int *bState;
         };
         union {
                 void *callback;
@@ -112,6 +114,19 @@ void RaySimpleGUI__Button(char *text, void *callback) {
 
 
 
+void RaySimpleGUI__Checkbox(int *bState) {
+
+        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_size] = (_RaySimpleGUI__Widget) {
+                .type = _RaySimpleGUI__WIDGETTYPE_CHECKBOX,
+                .bState = bState
+        };
+
+        _RaySimpleGUI__widgets_size++;
+
+}
+
+
+
 void RaySimpleGUI__InputField(char *text_OUT, int text_OUT_size) {
 
         _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_size] = (_RaySimpleGUI__Widget) {
@@ -132,6 +147,7 @@ void RaySimpleGUI__InputField(char *text_OUT, int text_OUT_size) {
 
 void _RaySimpleGUI__DrawLabel(int verticalOffset, char *text);
 void _RaySimpleGUI__DrawButton(int verticalOffset, char *text, void *callback);
+void _RaySimpleGUI__DrawCheckbox(int verticalOffset, int *bState);
 void _RaySimpleGUI__DrawInputField(int verticalOffset, char *text_OUT, int text_OUT_size);
 
 void RaySimpleGUI__Draw() {
@@ -146,7 +162,7 @@ void RaySimpleGUI__Draw() {
 
 
         int bCenterWidgets = 0;
-        int totalHeight = _RaySimpleGUI__widgets_size * _RaySimpleGUI__HEIGHT*_RaySimpleGUI__scale;
+        int totalHeight = _RaySimpleGUI__widgets_size * _RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale;
 
         // Center...
 
@@ -170,8 +186,8 @@ void RaySimpleGUI__Draw() {
         for (int i = 0; i < _RaySimpleGUI__widgets_size; i++) {
 
                 int verticalOffset;
-                if (bCenterWidgets) verticalOffset = (GetScreenHeight()/2 - totalHeight/2) + (_RaySimpleGUI__HEIGHT*_RaySimpleGUI__scale * i);
-                else verticalOffset = (_RaySimpleGUI__HEIGHT*_RaySimpleGUI__scale * i) - _RaySimpleGUI__scrollOffset;
+                if (bCenterWidgets) verticalOffset = (GetScreenHeight()/2 - totalHeight/2) + (_RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale * i);
+                else verticalOffset = (_RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale * i) - _RaySimpleGUI__scrollOffset;
 
                 switch(_RaySimpleGUI__widgets[i].type) {
 
@@ -181,6 +197,10 @@ void RaySimpleGUI__Draw() {
 
                         case _RaySimpleGUI__WIDGETTYPE_BUTTON:
                                 _RaySimpleGUI__DrawButton(verticalOffset, _RaySimpleGUI__widgets[i].text, _RaySimpleGUI__widgets[i].callback);
+                        break;
+
+                        case _RaySimpleGUI__WIDGETTYPE_CHECKBOX:
+                                _RaySimpleGUI__DrawCheckbox(verticalOffset, _RaySimpleGUI__widgets[i].bState);
                         break;
 
                         case _RaySimpleGUI__WIDGETTYPE_INPUTFIELD:
@@ -208,7 +228,7 @@ void RaySimpleGUI__Draw() {
 
 void _RaySimpleGUI__DrawLabel(int verticalOffset, char *text) {
 
-        int fontSize = _RaySimpleGUI__HEIGHT*_RaySimpleGUI__scale - 4;
+        int fontSize = _RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale - 4;
         Vector2 textSize = MeasureTextEx(GetFontDefault(), text, fontSize, fontSize/10);
         DrawText(
                 text,
@@ -228,7 +248,7 @@ void _RaySimpleGUI__DrawButton(int verticalOffset, char *text, void *callback) {
                 .x = 0,
                 .y = verticalOffset,
                 .width = GetScreenWidth(),
-                .height = _RaySimpleGUI__HEIGHT*_RaySimpleGUI__scale
+                .height = _RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale
         };
 
         // Border
@@ -275,9 +295,52 @@ void _RaySimpleGUI__DrawButton(int verticalOffset, char *text, void *callback) {
 
 
 
+void _RaySimpleGUI__DrawCheckbox(int verticalOffset, int *bState) {
+
+        Rectangle checkboxRect = {
+                .x = GetScreenWidth()/2 - (_RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale)/2,
+                .y = verticalOffset,
+                .width = _RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale,
+                .height = _RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale
+        };
+
+        // Background
+
+        DrawRectangle(
+                checkboxRect.x + 1,
+                checkboxRect.y + 1,
+                checkboxRect.width - 2,
+                checkboxRect.height - 2,
+                WHITE
+        );
+
+        // Checked? box
+
+        DrawRectangle(
+                checkboxRect.x + checkboxRect.width/4,
+                checkboxRect.y + checkboxRect.height/4,
+                checkboxRect.width - checkboxRect.width/2,
+                checkboxRect.height - checkboxRect.height/2,
+                *bState ? BLACK : WHITE
+        );
+
+        // Click check & handling
+
+        if (
+                IsMouseButtonReleased(MOUSE_BUTTON_LEFT) &&
+                GetMouseY() >= checkboxRect.y &&
+                GetMouseY() <= checkboxRect.y + checkboxRect.height &&
+                GetMouseX() >= checkboxRect.x &&
+                GetMouseX() <= checkboxRect.x + checkboxRect.width
+        ) *bState = !*bState;
+
+}
+
+
+
 void _RaySimpleGUI__DrawInputField(int verticalOffset, char *text_OUT, int text_OUT_size) {
 
-        int *bFocused = (int*)&_RaySimpleGUI__persistentWidgetData[_RaySimpleGUI__persistentWidgetData_index];
+        int *bFocused = (int*)&(_RaySimpleGUI__persistentWidgetData[_RaySimpleGUI__persistentWidgetData_index]);
         _RaySimpleGUI__persistentWidgetData_index++;
 
 
@@ -286,7 +349,7 @@ void _RaySimpleGUI__DrawInputField(int verticalOffset, char *text_OUT, int text_
                 .x = 0,
                 .y = verticalOffset,
                 .width = GetScreenWidth(),
-                .height = _RaySimpleGUI__HEIGHT*_RaySimpleGUI__scale
+                .height = _RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale
         };
 
         // Border
@@ -321,22 +384,31 @@ void _RaySimpleGUI__DrawInputField(int verticalOffset, char *text_OUT, int text_
                 WHITE
         );
 
-        // Click check & handling
+        // Right click check & handling - paste from clipboard
+
+        if (
+                IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) &&
+                GetMouseY() >= inputFieldRect.y &&
+                GetMouseY() <= inputFieldRect.y + inputFieldRect.height
+        ) {
+                const char *clipboardText = GetClipboardText();
+                if (TextLength(clipboardText)+1 < text_OUT_size) TextCopy(text_OUT, clipboardText);
+        }
+
+        // Left click check & handling - focus
 
         if (
                 IsMouseButtonReleased(MOUSE_BUTTON_LEFT) &&
                 GetMouseY() >= inputFieldRect.y &&
                 GetMouseY() <= inputFieldRect.y + inputFieldRect.height
         ) *bFocused = 1;
-        else if (
-                IsMouseButtonReleased(MOUSE_BUTTON_LEFT) ||
-                IsKeyPressed(KEY_ESCAPE)
-        ) *bFocused = 0;
+        else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) *bFocused = 0;
 
         // Text input handling
 
         if (*bFocused) {
                 if (IsKeyPressed(KEY_BACKSPACE) && TextLength(text_OUT) != 0) text_OUT[TextLength(text_OUT)-1] = 0;
+                if (IsKeyPressed(KEY_ESCAPE)) text_OUT[0] = 0;
 
                 for (
                         int inChar = GetCharPressed(); // Init
