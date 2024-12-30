@@ -68,7 +68,7 @@ typedef struct {
 } _RaySimpleGUI__Widget;
 
 _RaySimpleGUI__Widget _RaySimpleGUI__widgets[_RaySimpleGUI__MAX_WIDGETS];
-int _RaySimpleGUI__widgets_size = 0;
+int _RaySimpleGUI__widgets_count = 0;
 
 void *_RaySimpleGUI__persistentWidgetData[_RaySimpleGUI__MAX_WIDGETS] = {};
 int _RaySimpleGUI__persistentWidgetData_index = 0;
@@ -77,11 +77,11 @@ int _RaySimpleGUI__persistentWidgetData_index = 0;
 
 void RaySimpleGUI__Gap() {
 
-        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_size] = (_RaySimpleGUI__Widget) {
+        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_count] = (_RaySimpleGUI__Widget) {
                 .type = _RaySimpleGUI__WIDGETTYPE_GAP
         };
 
-        _RaySimpleGUI__widgets_size++;
+        _RaySimpleGUI__widgets_count++;
 
 }
 
@@ -89,12 +89,12 @@ void RaySimpleGUI__Gap() {
 
 void RaySimpleGUI__Label(char *text) {
 
-        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_size] = (_RaySimpleGUI__Widget) {
+        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_count] = (_RaySimpleGUI__Widget) {
                 .type = _RaySimpleGUI__WIDGETTYPE_LABEL,
                 .text = text
         };
 
-        _RaySimpleGUI__widgets_size++;
+        _RaySimpleGUI__widgets_count++;
 
 }
 
@@ -102,13 +102,13 @@ void RaySimpleGUI__Label(char *text) {
 
 void RaySimpleGUI__Button(char *text, void *callback) {
 
-        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_size] = (_RaySimpleGUI__Widget) {
+        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_count] = (_RaySimpleGUI__Widget) {
                 .type = _RaySimpleGUI__WIDGETTYPE_BUTTON,
                 .text = text,
                 .callback = callback
         };
 
-        _RaySimpleGUI__widgets_size++;
+        _RaySimpleGUI__widgets_count++;
 
 }
 
@@ -116,12 +116,12 @@ void RaySimpleGUI__Button(char *text, void *callback) {
 
 void RaySimpleGUI__Checkbox(int *bState) {
 
-        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_size] = (_RaySimpleGUI__Widget) {
+        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_count] = (_RaySimpleGUI__Widget) {
                 .type = _RaySimpleGUI__WIDGETTYPE_CHECKBOX,
                 .bState = bState
         };
 
-        _RaySimpleGUI__widgets_size++;
+        _RaySimpleGUI__widgets_count++;
 
 }
 
@@ -129,13 +129,13 @@ void RaySimpleGUI__Checkbox(int *bState) {
 
 void RaySimpleGUI__InputField(char *text_OUT, int text_OUT_size) {
 
-        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_size] = (_RaySimpleGUI__Widget) {
+        _RaySimpleGUI__widgets[_RaySimpleGUI__widgets_count] = (_RaySimpleGUI__Widget) {
                 .type = _RaySimpleGUI__WIDGETTYPE_INPUTFIELD,
                 .text_OUT = text_OUT,
                 .text_OUT_size = text_OUT_size
         };
 
-        _RaySimpleGUI__widgets_size++;
+        _RaySimpleGUI__widgets_count++;
 
 }
 
@@ -162,7 +162,7 @@ void RaySimpleGUI__Draw() {
 
 
         int bCenterWidgets = 0;
-        int totalHeight = _RaySimpleGUI__widgets_size * _RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale;
+        int totalHeight = _RaySimpleGUI__widgets_count * _RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale;
 
         // Center...
 
@@ -183,7 +183,7 @@ void RaySimpleGUI__Draw() {
 
         // Draw
 
-        for (int i = 0; i < _RaySimpleGUI__widgets_size; i++) {
+        for (int i = 0; i < _RaySimpleGUI__widgets_count; i++) {
 
                 int verticalOffset;
                 if (bCenterWidgets) verticalOffset = (GetScreenHeight()/2 - totalHeight/2) + (_RaySimpleGUI__WIDGET_HEIGHT*_RaySimpleGUI__scale * i);
@@ -215,7 +215,7 @@ void RaySimpleGUI__Draw() {
         // So that library user can change composition of UI
         // by just calling the related RaySimpleGUI__... functions
         // every frame.
-        _RaySimpleGUI__widgets_size = 0;
+        _RaySimpleGUI__widgets_count = 0;
         _RaySimpleGUI__persistentWidgetData_index = 0;
 
 }
